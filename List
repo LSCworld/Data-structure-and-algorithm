@@ -1,1 +1,205 @@
+#include<stdio.h>
+#include<stdlib.h>
 
+#define Type int  //数据域类型为int
+
+
+//链表节点定义
+typedef struct ListNode
+{
+	Type value;//数据域
+	struct ListNode* next;//指针域
+}ListNode;
+
+//节点创建函数
+ListNode* CreateNode(Type data)
+{
+	ListNode* node = (ListNode*)malloc(sizeof(ListNode));//创建一个位于堆区的节点；
+	node->next = NULL;//指针域置空
+	node->value = data;//赋值
+	return node;
+}
+//尾插法
+ListNode* ListBack_Push(ListNode* head, Type i)
+{
+	if (head == NULL)//空链表判断
+	{
+		head = CreateNode(i);
+		return head;
+	}
+	//链表非空
+	ListNode* newNode = CreateNode(i);//创建新节点
+	//进行尾插
+	ListNode* tmp = head;
+	while (tmp->next != NULL)//找到尾部
+	{
+		tmp = tmp->next;
+	}
+	tmp->next = newNode;
+	return head;
+}
+//头插法
+ListNode* ListFront_Push(ListNode*head,Type i)
+{
+	if (head == NULL)//空链表判断
+	{
+		head = CreateNode(i);
+		return head;
+	}
+	//链表非空
+	ListNode* newNode = CreateNode(i);//创建新节点
+	//进行头插
+	newNode->next = head;
+	head = newNode;
+	return head;
+}
+//链表插入
+ListNode* ListInsert(ListNode* head, Type val, int pos)
+{
+	if (head == NULL && pos == 0)//链表为空且插入点为0；
+		return CreateNode(val);
+	else if(head == NULL && pos != 0)
+		return NULL;
+	if (pos == 0)//头插
+	{
+		return ListFront_Push(head,val);
+	}
+	ListNode* now = head;//
+	ListNode* pre = NULL;//now的前一个节点
+	int step = 0;
+	while (now && (pos!=step))//寻找位置
+	{
+		pre = now;
+		now = now->next;
+		step++;
+	}
+	if (step < pos)//pos大于链表长度
+	{
+		return head;
+	}
+	else if(now == NULL && step == pos)//尾插
+	{
+		return ListBack_Push(head, val);
+	}
+	else//中间插
+	{
+		ListNode* node = CreateNode(val);
+		node->next = now;
+		pre->next = node;
+	}
+	return head;
+}
+//查找元素
+void ListFind(ListNode*head,Type val)
+{
+	ListNode* tmp = head;
+	while (tmp != NULL)
+	{
+		if (tmp->value = val)
+		{
+			printf("NOT——FIND\n");
+			return;
+		}
+		tmp = tmp->next;
+	}
+	printf("FIND——OUT\n");
+}
+
+//删除元素
+ListNode*  ListDelete(ListNode* head, Type val)//此处实现为 删除第一个出现符合的元素；val为元素值
+{
+	ListNode* now = head;
+	ListNode* pre = NULL;
+	if (head == NULL)//头节点为空
+	{
+		return NULL;
+	}
+	if (head->value == val)//若为头节点
+	{
+		pre = head->next;
+		free(head);
+		return pre;
+	}
+	while (now != NULL && (now->value != val))
+	{
+		pre = now;
+		now = now->next;
+	}
+	if (now == NULL)//删除元素不存在
+		return head;
+	//存在
+	pre->next = now->next;
+	free(now);
+	return head;
+}
+
+//链表打印
+void ListPrint(ListNode* head)
+{
+	ListNode* tmp = head;
+	while (tmp != NULL)
+	{
+		printf("%d  ", tmp->value);
+		tmp = tmp->next;//指针后移
+	}
+}
+//链表释放
+void ListFree(ListNode* head)
+{
+	ListNode* now = head;
+	if (head == NULL)//头节点空，不释放
+	{
+		return;
+	}
+	ListNode* after = now->next;
+	while (after != NULL)
+	{
+		free(now);
+		now = after;
+		after = now->next;
+	}
+	free(now);//删除最后一个节点
+}
+
+int main()
+{
+
+	//实现一个数值为1-5的链表
+
+	ListNode* head =(ListNode*) malloc(sizeof(ListNode));//创建一个头节点；也可以置空，让其在插入时创建；
+	if (head == NULL) //可以进行一个判断，是否申请到了内存
+	{
+		printf("THE MEMORY IS NO FREE\n");
+		return 0;
+	}
+	head->next = NULL;//指针域置空；
+	head->value = 1;
+
+	//ListNode* head = NULL;置空
+
+	for (int i = 2; i < 6; ++i)
+	{
+		//采用尾插法
+		head = ListBack_Push(head, i);//1 2 3 4 5
+
+		//采用头插法
+		//head = ListFront_Push(head,i);//5 4 3 2 1
+	}
+
+	//链表插入
+	head = ListInsert(head,3,1);//3为要插入的值，1为插入位置
+	
+	//删除元素
+	head = ListDelete(head, 1);//此处实现为 删除第一个出现符合的元素；
+	
+	//链表打印
+	ListPrint(head);
+
+	//查找元素
+	ListFind(head,4);
+
+	//链表释放
+	ListFree(head);
+	
+	return 0;
+}
