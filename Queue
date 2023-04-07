@@ -1,0 +1,148 @@
+#include<stdio.h>
+#include<stdbool.h>
+#include<stdlib.h>
+#define Type int 
+#define Capacity  20
+
+//   1.  数组实现
+
+typedef struct queue   //队列定义实现
+{
+	Type data[Capacity];//数据
+	int head;//队头，执行出队
+	int tail;//队尾，执行入队,tail指向最后一个元素的下一位；
+}queue;
+
+//入队
+void QueuePush(queue* q, Type val)
+{
+	if (q->tail == Capacity)//满了
+		return;
+
+	q->data[q->tail++] = val;
+}
+
+//出队
+void QueuePop(queue* q)
+{
+	
+	if (q->tail-q->head == 0)//空队不允许出队
+		return;
+
+	//出队
+	q->head++;
+}
+
+//获取大小
+int QueueGetSize(queue* q)
+{
+	return q->tail - q->head;
+}
+
+//判空
+bool IsEmpty(queue* q)
+{
+	return (q->tail - q->head) == 0;
+}
+
+//清空队列
+void QueueClear(queue* q)
+{
+	q->head = q->tail = 0;
+}
+
+//获取队头/尾
+//。。。。。
+
+//*******************************************************  分界线  *******************************
+
+
+//   2.  链表实现
+
+
+typedef struct QueNode  //链表节点
+{
+	Type value;
+	struct QueNode* next;
+}QueNode;
+
+//队列定义
+typedef struct Queue
+{
+	QueNode* head;//队头指针
+	QueNode* tail;//队尾指针
+	int size;//队列大小
+}Queue;
+
+//节点创建
+QueNode* nodeCreate(Type data)
+{
+	QueNode* newNode = (QueNode*)malloc(sizeof(QueNode));
+	// 此处可加个判断，判断是否申请内存成功；
+	newNode->value = data;
+	newNode->next = NULL;
+	return newNode;
+}
+
+//入队
+void queuePush(Queue* q,Type val)
+{
+	if (q->head == NULL)
+	{
+		q->head = q->tail = nodeCreate(val);
+		q->size++;
+		return;
+	}
+	QueNode* newnode = nodeCreate(val);
+	q->tail->next = newnode;
+	q->tail = newnode;
+	q->size++;
+}
+
+//出队
+void queuePop(Queue*q)
+{
+	if (q->size == 0)//空队列不允许出队
+	{
+		return;
+	}
+		
+	QueNode* tmp = q->head;
+	q->head = q->head->next;
+	free(tmp);
+	q->size--;
+	if (q->size == 0)//一个易忘关键点
+	{
+		q->head = q->tail = NULL;
+	}
+}
+
+//判空/获取大小----size（省略）
+
+
+//清空队列
+void queueClear(Queue* q)
+{
+	if (q->head == NULL)
+		return;
+	QueNode* now = q->head;
+	QueNode* after = q->head->next;
+	while (after!= NULL)
+	{
+		free(now);
+		now = after;
+		after = now->next;
+	}
+	free(now);
+	q->size = 0;
+	q->head = q->tail = NULL;
+}
+
+
+//获取队头/尾(省略）
+//。。。。
+
+int main()
+{
+	return 0;
+}
