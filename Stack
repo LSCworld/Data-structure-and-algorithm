@@ -38,7 +38,7 @@ int GetSize(stack* s)
 	return s->top + 1;
 }
 //获取栈顶元素
-Type GetPop(stack* s)
+Type GetTop(stack* s)
 {
 	return s->data[s->top];
 }
