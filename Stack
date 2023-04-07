@@ -1,0 +1,127 @@
+#include<stdio.h>
+#include<stdbool.h>
+#include<stdlib.h>
+#define Type int  //定义栈数据类型
+#define Capacity  20  //设置栈最大容量
+
+//数组实现栈
+
+typedef struct stack
+{
+	Type data[Capacity];//此处 Type 为 int 类型
+	int top;//栈顶，此处实现为 top为 -1 时为空栈；
+}stack;
+
+//入栈
+void stack_push(stack* s,Type a)
+{
+	s->data[++s->top] = a;//入栈并且top++;
+}
+//判定栈是否为空
+bool isEmpty(stack* s)
+{
+	return s->top == -1;
+}
+
+//出栈
+void stack_pop(stack* s)
+{
+	if (isEmpty(s))//判空
+	{
+		return;
+	}
+	s->top--; //并没有实际去除
+}
+//获取栈大小
+int GetSize(stack* s)
+{
+	return s->top + 1;
+}
+//获取栈顶元素
+Type GetPop(stack* s)
+{
+	return s->data[s->top];
+}
+
+
+//***************************************  分界线  ****************************************************************
+// 
+
+
+//链表实现栈
+typedef struct Node  //节点定义
+{
+	Type data;
+	struct Node* next;
+}Node;
+
+typedef struct Lstack    //定义栈
+{
+	struct Node* top;//栈顶，头插法实现；
+	int size;//记录大小,此处设为0；
+}Lstack;
+
+//节点创建
+Node* nodeCreate(Type val)
+{
+	Node* newNode = (Node*)malloc(sizeof(Node));
+	newNode->next = NULL;
+	newNode->data = val;
+	return newNode;
+}
+//入栈
+void Lstackpush(Lstack* s, Type val)
+{
+	Node* new = nodeCreate(val);
+	if (s->top == NULL)
+	{
+		s->top = new; s->size++;
+		return;
+	}
+	new->next = s->top;
+	s->top = new;
+	s->size++;
+}
+//判空
+bool IsEmpty(Lstack* s)
+{
+	return s->size == 0;
+}
+
+//出栈
+void Lstackpop(Lstack* s)
+{
+	if (IsEmpty(s))//空栈不允许出栈
+	{
+		return;
+	}
+	Node* tmp = s->top;
+	s->top = s->top->next;
+	s->size--;
+	free(tmp);
+}
+//获取大小
+int Get_size(Lstack* s)
+{
+	return s->size;
+}
+
+
+
+//获取栈顶元素
+Node* Get_Top(Lstack* s)
+{
+	return s->top;
+}
+
+int main()
+{
+	//数组实现栈
+	struct stack s;
+	s.top = -1;
+	//链表实现栈
+	struct Lstack L;
+	L.size = 0;
+	L.top = NULL;
+	return 0;
+}
