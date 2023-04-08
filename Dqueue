@@ -1,0 +1,184 @@
+#include<stdio.h>
+#include<stdbool.h>
+#include<stdlib.h>
+#define size  50
+#define Type int
+
+//   1.  数组实现
+
+typedef struct depue   //双端队列定义
+{
+	Type data[size << 1];//容量为size*2
+	int head;//队首指针
+	int tail;//队尾指针,指向最后元素下一个
+	//初始化时  head = size;tail = size;从中间开始
+}deque;
+
+//队首入队
+void DeqPushFront(deque* d, Type val)
+{
+	if(d->head != 0)
+	d->data[--d->head] = val;
+}
+//队尾入队
+void DeqPushBack(deque* q, Type val)
+{
+	if (q->tail < (size << 1))
+	{
+		q->data[q->tail++] = val;
+	}
+}
+//队首出队
+void DeqPopFront(deque* q)
+{
+	if(q->head != q->tail)
+	q->head++;
+}
+
+//队尾出队
+void DeqPopBack(deque* q)
+{
+	if (q->tail != q->head)
+		q->tail--;
+}
+//获取大小
+int DeqGetSize(deque* q)
+{
+	return (q->tail - q->head);
+}
+
+//判空
+bool IsEmpty(deque* q)
+{
+	return DeqGetSize(q) == 0;
+}
+
+//队列清空
+void DeqClear(deque* q)
+{
+	q->head = q->tail = size;
+}
+
+//获取队首/队尾元素 （省略）         q->data[q->head];         q->data[q->tail - 1];
+
+//*****************************************************  分界线   **********************************************
+
+
+//    2.  链表实现
+
+typedef struct DeqNode     //节点定义,双向链表
+{
+	Type value;
+	struct DeqNode* pre;
+	struct DeqNode* next;
+}DeqNode;
+
+//双端队列定义
+typedef struct Deque
+{
+	DeqNode* head;//头指针
+	DeqNode* tail;//尾指针
+	int DeqSize;//大小
+}Deque;
+
+//节点创建
+DeqNode* NodeCreate(Type data)
+{
+	DeqNode* newNode = (DeqNode*)malloc(sizeof(DeqNode));
+	// 可以加一个判断：判断是否申请失败
+	newNode->pre = NULL;
+	newNode->next = NULL;
+	newNode->value = data;
+	return newNode;
+}
+
+//队首入队
+void DeqHeadPush( Deque* d, Type data)
+{
+	if (d->head == NULL)
+	{
+		d->tail = d->head = NodeCreate(data);
+		d->DeqSize++;
+		return;
+	}
+	DeqNode* newNode = NodeCreate(data);
+	newNode->next = d->head;
+	d->head->pre = newNode;
+	d->head = newNode;
+	d->DeqSize++;
+}
+//队尾入队
+void DeqBackPush(Deque* d, Type data)
+{
+
+	if (d->tail == NULL)
+	{
+		d->head = d->tail = NodeCreate(data);
+		d->DeqSize++;
+		return;
+	}
+	DeqNode* newNode = NodeCreate(data);
+	d->tail->next = newNode;
+	newNode->pre = d->tail;
+	d->tail = newNode;
+	d->DeqSize++;
+}
+//队首出队
+void DeqHeadPop(Deque* d)
+{
+	if (d->head == NULL)
+		return;
+
+	DeqNode* tmp = d->head;
+	d->head = d->head->next;
+	d->head->pre = NULL;
+	free(tmp);
+	d->DeqSize--;
+	if (d->DeqSize == 0)
+	{
+		d->head = d->tail = NULL;
+	}
+}
+//队尾出队
+void DeqBackPop(Deque* d)
+{
+	if (d->tail == NULL)
+		return;
+
+	DeqNode* tmp = d->tail;
+	d->tail = tmp->pre;
+	d->tail->next = NULL;
+	free(tmp);
+	d->DeqSize--;
+	if (d->DeqSize == 0)
+	{
+		d->head = d->tail = NULL;
+	}
+}
+
+
+//队列清空
+void depueClear(Deque* d)
+{
+	if (d->head == NULL)
+		return;
+	DeqNode* now = d->head;
+	DeqNode* after =now->next;
+	while (after != NULL)
+	{
+		free(now);
+		now = after;
+		after = now->next;
+	}
+	free(now);
+}
+
+//大小，判空，用  DeqSize  判断
+
+//获取队首/队尾元素    d->head->value; d->tail->value;
+
+int main()
+{
+
+	return 0;
+}
